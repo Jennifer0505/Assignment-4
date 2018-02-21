@@ -1,0 +1,54 @@
+---
+title: "12/6/1"
+author: "Yuehan Xiao"
+date: "2/20/2018"
+output: html_document
+---
+
+1. 
+```{r}
+who1 <- who %>%
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE)
+glimpse(who1)
+who2 <- who1 %>%
+ mutate(key = stringr::str_replace(key, "newrel", "new_rel"))
+
+who3 <- who2 %>%
+  separate(key, c("new", "type", "sexage"), sep = "_")
+who3
+who3 %>%
+  count(new)
+who4 <- who3 %>%
+  select(-new, -iso2, -iso3)
+who5 <- who4 %>%
+  separate(sexage, c("sex", "age"), sep = 1)
+who5
+
+who1 %>%
+  filter(cases == 0) %>%
+  nrow()
+```
+From the code above, it seems like none of the country has missing value, so it is reasonable to treat both implicit and explicit missing value the same. Zero probably means zero cases, but NA represents it doesn't exist. 
+
+2. 
+It would be hard to seperate the newrel key which makes the data inconsistent and messy. 
+
+3. 
+```{r}
+select(who3, country, iso2, iso3) %>%
+  distinct() %>%
+  group_by(country) %>%
+  filter(n() > 1)
+```
+According to the code, iso2 and iso3 are only abbreviations of conutry. 
+
+4. 
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1995) %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```

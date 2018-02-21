@@ -1,0 +1,73 @@
+---
+title: 'section 10.5'
+author: "Yuehan Xiao"
+date: "2/20/2018"
+output: html_document
+---
+
+1. 
+```{r}
+library(tibble)
+print(mtcars)
+class(mtcars)
+is.tibble(mtcars)
+```
+mtcars is not a tibble as indicated by the code. 
+Also, data.frame will show all the data on the console compare to tibble, which only shows the first 10 rows of data. 
+
+2. 
+```{r}
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+df[, "xyz"]
+df[, c("abc", "xyz")]
+
+df1 <-tibble(abc = 1, xyz = "a")
+df1$x
+df1[, "xyz"]
+df1[, c("abc", "xyz")]
+
+```
+ For tibble, if you want to pull out a single varible, you must type the whole name for the variable. However, for data.frame, you can do partial matching. 
+ 
+ When we type "[ ]""the data frame will returns a factor but the tibble returns a data frame.  
+ 
+ 
+
+3. 
+We use tibble$name, or tibble[["name"]] to extract the variable
+
+4. 
+```{r}
+annoying <- tibble(
+  `1` = 1:10,
+  `2` = `1` * 2 + rnorm(length(`1`))
+)
+
+annoying$`1`
+
+ggplot(data = annoying) + 
+  geom_point(mapping = aes(x = `1`, y = `2`))
+
+annoying <- annoying %>% mutate(`3` = `2`/`1`)
+
+annoying %>%
+  rename(one = `1`,
+         two = `2`,
+         three = `3`)
+```
+
+5. 
+```{r}
+tibble::enframe()
+```
+it converts named atomic vectors or lists to two-column data frames. 
+
+6. 
+```{r}
+library(fivethirtyeight)
+options(tibble.max_extra_cols = 5)
+
+police_killings
+```
+
